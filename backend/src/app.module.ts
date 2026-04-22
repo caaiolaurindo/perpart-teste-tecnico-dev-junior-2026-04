@@ -1,13 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { AuditModule } from './audit/audit.module';
 
 import { User } from './users/user.entity';
 import { Product } from './products/product.entity';
 import { Category } from './categories/category.entity';
 import { Favorite } from './favorites/favorite.entity';
 import { AuditLog } from './audit/audit-log.entity';
-import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -25,8 +34,16 @@ import { AuthModule } from './auth/auth.module';
         synchronize: true,
       }),
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     AuthModule,
+    UsersModule,
+    CategoriesModule,
+    ProductsModule,
+    FavoritesModule,
+    AuditModule,
   ],
 })
-
 export class AppModule {}
