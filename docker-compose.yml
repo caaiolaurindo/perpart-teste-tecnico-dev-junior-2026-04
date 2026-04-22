@@ -15,6 +15,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - desafio_net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -22,17 +27,24 @@ services:
       dockerfile: Dockerfile
     container_name: desafio_backend
     restart: always
-    env_file:
-      - ./backend/.env
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: desafio_db
+      JWT_SECRET: super_secret_jwt_key_troque_em_producao
+      JWT_EXPIRES_IN: 7d
+      PORT: 3001
     ports:
       - '3001:3001'
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - desafio_net
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - uploads_data:/app/uploads
 
   frontend:
     build:
@@ -40,18 +52,18 @@ services:
       dockerfile: Dockerfile
     container_name: desafio_frontend
     restart: always
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
     ports:
       - '3000:3000'
     depends_on:
       - backend
     networks:
       - desafio_net
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
 
 volumes:
   pgdata:
+  uploads_data:
 
 networks:
   desafio_net:
