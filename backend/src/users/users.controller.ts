@@ -11,6 +11,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { UserRole } from './user.entity';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -20,7 +21,7 @@ export class UsersController {
   constructor(private service: UsersService) {}
 
   @Get()
-  @Roles('admin')
+  @Roles(UserRole.ADMIN)
   findAll(
     @Query('page') page: number,
     @Query('limit') limit: number,
@@ -35,25 +36,25 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles('admin')
+  @Roles(UserRole.ADMIN)
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @Roles('admin')
+  @Roles(UserRole.ADMIN)
   create(@Body() body: Partial<any>) {
     return this.service.create(body);
   }
 
   @Put(':id')
-  @Roles('admin')
+  @Roles(UserRole.ADMIN)
   update(@Param('id') id: string, @Body() body: Partial<any>) {
     return this.service.update(id, body);
   }
 
   @Delete(':id')
-  @Roles('admin')
+  @Roles(UserRole.ADMIN)
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
