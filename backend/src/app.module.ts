@@ -20,7 +20,7 @@ import { AuditLog } from './audit/audit-log.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
+   TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -32,7 +32,8 @@ import { AuditLog } from './audit/audit-log.entity';
         database: config.get('DATABASE_NAME'),
         entities: [User, Product, Category, Favorite, AuditLog, Notification],
         synchronize: true,
-
+        retryAttempts: 10, 
+        retryDelay: 3000, 
       }),
     }),
     ServeStaticModule.forRoot({

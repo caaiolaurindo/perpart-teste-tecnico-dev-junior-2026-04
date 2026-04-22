@@ -9,8 +9,6 @@ COPY . .
 
 RUN npm run build
 
-RUN mkdir -p uploads/avatars uploads/products
-
 EXPOSE 3001
 
-CMD ["npm", "run", "start:prod"]
+CMD ["sh", "-c", "mkdir -p uploads/avatars uploads/products && npm run start:prod"]
