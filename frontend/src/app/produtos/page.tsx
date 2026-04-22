@@ -66,9 +66,10 @@ export default function ProdutosPage() {
     const fetchCategories = async () => {
         try {
             const { data } = await api.get('/categories');
-            setCategories(data);
+            setCategories(Array.isArray(data) ? data : data.data || []);
         } catch {
             setError('Erro ao carregar categorias');
+            setCategories([]);
         }
     };
 
@@ -76,7 +77,7 @@ export default function ProdutosPage() {
     useEffect(() => {
         fetchProducts();
         fetchCategories();
-    }, [page, search]);
+    }, [page, search, categoryFilter]);
 
     const openCreate = () => {
         setEditing(null);
@@ -133,7 +134,9 @@ export default function ProdutosPage() {
         }
     };
 
-    const categoryOptions = categories.map((c) => ({ label: c.name, value: c.id }));
+    const categoryOptions = Array.isArray(categories)
+        ? categories.map((c) => ({ label: c.name, value: c.id }))
+        : [];
 
     const columns = [
         {

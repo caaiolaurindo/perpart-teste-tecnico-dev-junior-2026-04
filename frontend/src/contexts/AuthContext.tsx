@@ -30,20 +30,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     if (stored && token) {
-      setUser(JSON.parse(stored));
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        localStorage.clear();
+      }
     }
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { data } = await api.post('/auth/login', { email, password });
-    localStorage.setItem('token', data.access_token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    setUser(data.user);
-    if (data.user.role === 'admin') {
-      router.push('/dashboard');
-    } else {
-      router.push('/produtos');
+    try {
+      const { data } = await api.post('/auth/login', { email, password });
+      
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
+
+      setTimeout(() => {
+        if (data.user.role === 'admin') {
+          router.push('/dashboard');
+        } else {
+          router.push('/produtos');
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Erro no login:", error);
+      alert("Falha na autenticação. Verifique suas credenciais.");
     }
   };
 
