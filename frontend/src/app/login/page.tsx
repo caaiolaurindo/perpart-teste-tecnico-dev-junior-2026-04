@@ -74,6 +74,7 @@ export default function LoginPage() {
             style={{ width: '100%' }}
           />
         </Card>
+        <a href="/register">Não tem uma conta? Cadastre-se aqui</a>
       </div>
     </div>
   );
