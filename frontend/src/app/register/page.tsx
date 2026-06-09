@@ -1,36 +1,44 @@
 'use client';
 
-import { Button, Card, InputText, Typography } from "@uigovpe/components";
+import { Button, Card, InputText, Typography, Message } from "@uigovpe/components";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import api from "@/services/api";
+
 export default function Register() {
-    const [username, setUsername] = useState('');
+    const router = useRouter();
+    const [name, setName] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(''); 
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
-        if (!username || !email || !password) {
+        if (!name || !email || !password) {
             setError('Por favor, preencha todos os campos');
             return;
         }
+
         setLoading(true);
+        setError('');
+        setSuccess('');
+
         try {
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, email, password }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message || 'Erro ao registrar usuário');
-            } else {
-                setError('');
-            }
+            await api.post('/auth/register', { name, email, password });
+            
+            setSuccess('Conta criada com sucesso! Redirecionando para o login...');
+            
+            setTimeout(() => {
+                router.push('/login');
+            }, 2000);
+
         } catch (err) {
-            setError('Erro ao conectar com o servidor');
+            if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError('Erro ao conectar com o servidor. Verifique se o backend está rodando.');
+            }
         } finally {
             setLoading(false);
         }
@@ -52,17 +60,21 @@ export default function Register() {
                     </div>
 
                     <Typography variant="h4" style={{ marginBottom: '1rem' }}>Registrar</Typography>
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: '1rem' }}>
+                    
+                    {error && <Message severity="error" text={error} style={{ marginBottom: '1rem', width: '100%' }} />}
+                    {success && <Message severity="success" text={success} style={{ marginBottom: '1rem', width: '100%' }} />}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div>
                             <InputText
-                                label="Nome de usuário"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="seu nome de usuário"
+                                label="Nome Completo"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="seu nome completo"
                                 style={{ width: '100%' }}
                             />
                         </div>
-                        <div style={{ marginBottom: '1rem' }}>
+                        <div>
                             <InputText
                                 label="E-mail"
                                 value={email}
@@ -71,7 +83,7 @@ export default function Register() {
                                 style={{ width: '100%' }}
                             />
                         </div>
-                        <div style={{ marginBottom: '1.5rem' }}>
+                        <div style={{ marginBottom: '0.5rem' }}>
                             <InputText
                                 label="Senha"
                                 value={password}
@@ -81,17 +93,20 @@ export default function Register() {
                                 style={{ width: '100%' }}
                             />
                         </div>
-                        {error && <p>{error}</p>}
+                        
                         <Button
                             label={loading ? 'Registrando...' : 'Registrar'}
-                            onClick={handleSubmit}
+                            onClick={handleSubmit} 
                             disabled={loading}
                             style={{ width: '100%' }}
                         />
-                    </form>
+                    </div>
                 </Card>
-                <a href="/login">Já tem uma conta? Faça login aqui</a>
-
+                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                    <a href="/login" style={{ color: '#003580', textDecoration: 'underline' }}>
+                        Já tem uma conta? Faça login aqui
+                    </a>
+                </div>
             </div>
         </div>
     );
