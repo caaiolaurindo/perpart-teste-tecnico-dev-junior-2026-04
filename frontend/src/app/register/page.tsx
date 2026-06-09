@@ -33,7 +33,7 @@ export default function Register() {
                 router.push('/login');
             }, 2000);
 
-        } catch (err) {
+        } catch (err : any) {
             if (err.response?.data?.message) {
                 setError(err.response.data.message);
             } else {
