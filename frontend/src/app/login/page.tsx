@@ -74,7 +74,9 @@ export default function LoginPage() {
             style={{ width: '100%' }}
           />
         </Card>
-        <a href="/register">Não tem uma conta? Cadastre-se aqui</a>
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <a href="/register"  style={{ color: '#003580', textDecoration: 'underline' }}>Não tem uma conta? Cadastre-se aqui</a>
+        </div>
       </div>
     </div>
   );
