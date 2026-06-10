@@ -17,6 +17,9 @@ export default class UserSeeder {
         password: 'padraosenhaadmin',
         role: UserRole.ADMIN,
       });
+      console.log('✅ Usuário admin criado com sucesso!');
+    }else{
+      console.log('⚠️ Usuário admin já existe, pulando criação.');
     }
   }
 }
