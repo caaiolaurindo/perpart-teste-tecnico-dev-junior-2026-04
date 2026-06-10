@@ -12,3 +12,4 @@ backend/dist/
 
 # docker
 *.log
+dados_do_banco/*
