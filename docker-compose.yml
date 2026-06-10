@@ -5,12 +5,12 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: mudarsenha123
       POSTGRES_DB: desafio_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./dados_do_banco:/var/lib/postgresql/data
     networks:
       - desafio_net
     healthcheck:
@@ -29,7 +29,7 @@ services:
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_PASSWORD: mudarsenha123
       DATABASE_NAME: desafio_db
       JWT_SECRET: super_secret_jwt_key_troque_em_producao
       JWT_EXPIRES_IN: 7d
@@ -60,7 +60,7 @@ services:
       - desafio_net
 
 volumes:
-  pgdata:
+  pgdata_novo:
   uploads_data:
 
 networks:
