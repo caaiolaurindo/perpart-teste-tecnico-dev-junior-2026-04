@@ -8,6 +8,7 @@ import {
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppLayout from '@/components/AppLayout';
 import api from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext'; 
 
 interface User {
     id: string;
@@ -18,6 +19,7 @@ interface User {
 }
 
 export default function UsuariosPage() {
+    const { user: userLogged } = useAuth(); 
     const [users, setUsers] = useState<User[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -29,7 +31,6 @@ export default function UsuariosPage() {
     const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' });
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const limit = 10;
-
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -58,38 +59,38 @@ export default function UsuariosPage() {
         setDialogOpen(true);
     };
 
-const handleSave = async () => {
-    try {
-        setLoading(true); 
-        let userId = editing?.id;
+    const handleSave = async () => {
+        try {
+            setLoading(true); 
+            let userId = editing?.id;
 
-        if (editing) {
-            await api.put(`/users/${editing.id}`, form);
-        } else {
-            const response = await api.post('/users', form);
-            userId = response.data.id; 
-        }
+            if (editing) {
+                await api.put(`/users/${editing.id}`, form);
+            } else {
+                const response = await api.post('/users', form);
+                userId = response.data.id; 
+            }
 
-        if (avatarFile && userId) {
-            const formData = new FormData();
-            formData.append('file', avatarFile);
+            if (avatarFile && userId) {
+                const formData = new FormData();
+                formData.append('file', avatarFile);
+                
+                await api.post(`/users/${userId}/avatar`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            }
+
+            setDialogOpen(false);
+            fetchUsers();
+            setAvatarFile(null);
             
-            await api.post(`/users/${userId}/avatar`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+        } catch (err) {
+            console.error(err);
+            setError('Erro ao salvar usuário. Verifique os dados e tente novamente.');
+        } finally {
+            setLoading(false);
         }
-
-        setDialogOpen(false);
-        fetchUsers();
-        setAvatarFile(null);
-        
-    } catch (err) {
-        console.error(err);
-        setError('Erro ao salvar usuário. Verifique os dados e tente novamente.');
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const handleDelete = async (id: string) => {
         if (!confirm('Deseja remover este usuário?')) return;
@@ -112,12 +113,23 @@ const handleSave = async () => {
         { field: 'role', header: 'Perfil' },
         {
             field: 'actions', header: 'Ações',
-            body: (row: User) => (
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <Button label="Editar" onClick={() => openEdit(row)} />
-                    <Button label="Remover" severity="danger" onClick={() => handleDelete(row.id)} />
-                </div>
-            ),
+            body: (row: User) => {
+                const isMe = row.id === userLogged?.id;
+
+                return (
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Button label="Editar" onClick={() => openEdit(row)} />
+                        <Button 
+                            label={isMe ? "Você" : "Remover"} 
+                            severity="danger" 
+                            disabled={isMe} // 💡 Bloqueia o clique caso seja a própria conta do Admin
+                            onClick={() => handleDelete(row.id)} 
+                            style={isMe ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+                            title={isMe ? "Você não pode remover sua própria conta" : ""}
+                        />
+                    </div>
+                );
+            },
         },
     ];
 
@@ -141,8 +153,8 @@ const handleSave = async () => {
                     }}
                     style={{ marginBottom: '1rem', width: '100%' }}
                 />
+                
                 <div style={{ overflowX: 'auto', width: '100%' }}>
-
                     <Table value={users} loading={loading}>
                         {columns.map((col) => (
                             <Column
@@ -154,6 +166,7 @@ const handleSave = async () => {
                         ))}
                     </Table>
                 </div>
+                
                 <Paginator
                     first={(page - 1) * limit}
                     rows={limit}
