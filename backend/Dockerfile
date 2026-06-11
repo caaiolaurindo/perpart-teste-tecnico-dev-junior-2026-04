@@ -11,4 +11,4 @@ RUN npm run build
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "mkdir -p uploads/avatars uploads/products && npm run start:prod"]
+CMD ["sh", "-c", "mkdir -p uploads/avatars uploads/products && node dist/src/main.js"]

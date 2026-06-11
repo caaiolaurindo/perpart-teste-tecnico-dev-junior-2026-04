@@ -122,7 +122,7 @@ export default function UsuariosPage() {
                         <Button 
                             label={isMe ? "Você" : "Remover"} 
                             severity="danger" 
-                            disabled={isMe} // 💡 Bloqueia o clique caso seja a própria conta do Admin
+                            disabled={isMe} 
                             onClick={() => handleDelete(row.id)} 
                             style={isMe ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
                             title={isMe ? "Você não pode remover sua própria conta" : ""}
