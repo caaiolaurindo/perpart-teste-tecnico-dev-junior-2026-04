@@ -10,7 +10,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./dados_do_banco:/var/lib/postgresql/data
+      - pgdata_novo:/var/lib/postgresql/data
     networks:
       - desafio_net
     healthcheck:
