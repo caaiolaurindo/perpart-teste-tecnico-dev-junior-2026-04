@@ -1,17 +1,17 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-    AppLayout, 
-    AdminSideBar, 
-    AdminUserBar, 
-    GovBar, 
-    BreadCrumb, 
-    Badge, 
-    Icon, 
+import {
+    AppLayout,
+    AdminSideBar,
+    AdminUserBar,
+    GovBar,
+    BreadCrumb,
+    Badge,
+    Icon,
     Toast,
     BreadcrumbProps,
-    MenuAction 
+    MenuAction
 } from '@uigovpe/components';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -47,7 +47,7 @@ export default function RootLayout({
         if (user) {
             api.get('/notifications')
                 .then(res => setNotifications(res.data))
-                .catch(() => {});
+                .catch(() => { });
         }
     }, [user]);
 
@@ -112,7 +112,7 @@ export default function RootLayout({
     return (
         <AppLayout >
             <GovBar />
-            
+
             <Toast ref={toastRef} />
 
             <AppLayout.MainLayout>
@@ -123,6 +123,11 @@ export default function RootLayout({
                     title="Meu Sistema"
                     footerSidebarLogo={footerSidebarLogo}
                     logo={sidebarLogo}
+                    ui={{
+                        container: {
+                            style: { minHeight: '90vh', height: '100%' }
+                        },
+                    }}
                 />
 
                 <AppLayout.ContentSection>
@@ -134,12 +139,15 @@ export default function RootLayout({
                             }}
                             menuActions={userMenuActions}
                             breadcrumb={breadcrumb}
+                            ui={{
+
+                            }}
                         />
 
-                        <div style={{ 
-                            position: 'absolute', 
-                            right: '250px', 
-                            top: '50%', 
+                        <div style={{
+                            position: 'absolute',
+                            right: '250px',
+                            top: '50%',
                             transform: 'translateY(-50%)',
                             zIndex: 10,
                             display: 'flex',
@@ -165,7 +173,7 @@ export default function RootLayout({
                         <AppLayout.PageContent>
                             {children}
                         </AppLayout.PageContent>
-                        
+
                     </AppLayout.MainContent>
                 </AppLayout.ContentSection>
             </AppLayout.MainLayout>
