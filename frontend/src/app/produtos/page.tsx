@@ -26,6 +26,14 @@ interface Category {
     name: string;
 }
 
+const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
+};
 export default function ProdutosPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -110,10 +118,10 @@ export default function ProdutosPage() {
             }
 
             if (imageFile) {
-                const formData = new FormData();
-                formData.append('file', imageFile);
-                await api.post(`/products/${savedProduct.id}/image`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                const base64Image = await convertToBase64(imageFile);
+
+                await api.post(`/products/${savedProduct.id}/image`, {
+                    imageUrl: base64Image
                 });
             }
 
@@ -167,7 +175,7 @@ export default function ProdutosPage() {
         <ProtectedRoute>
             <AppLayout>
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minHeight: '100%' }}>
-                    
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <Typography variant="h2">Produtos</Typography>
                         <Button label="Novo Produto" onClick={openCreate} />
@@ -260,7 +268,7 @@ export default function ProdutosPage() {
                                 appendOnSelect
                                 label="Anexe um arquivo"
                                 mode="default"
-                                onChange={() => {}}
+                                onChange={() => { }}
                                 onClear={() => setImageFile(null)}
                                 placeholder="Selecionar arquivo"
                                 supportText="Formatos permitidos: .jpeg, .jpg, .png"
