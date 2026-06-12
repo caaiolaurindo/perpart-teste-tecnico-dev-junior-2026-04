@@ -98,61 +98,66 @@ export default function CategoriasPage() {
     return (
         <ProtectedRoute>
             <AppLayout>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <Typography variant="h2">Categorias</Typography>
-                    <Button label="Nova Categoria" onClick={openCreate} />
-                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minHeight: '100%' }}>
 
-                {error && <Message severity="error" text={error} style={{ marginBottom: '1rem' }} />}
-
-                <Search
-                    label='Buscar'
-                    placeholder="Buscar categoria..."
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                    style={{ marginBottom: '1rem', width: '100%' }}
-                />
-                <div style={{ overflowX: 'auto', width: '100%' }}>
-                    <Table value={categories} loading={loading}>
-                        {columns.map((col) => (
-                            <Column
-                                key={col.field}
-                                field={col.field}
-                                header={col.header}
-                                body={col.body}
-                            />
-                        ))}
-                    </Table>
-                </div>
-
-                <Paginator
-                    first={(page - 1) * limit}
-                    rows={limit}
-                    totalRecords={total}
-                    onPageChange={(e) => setPage(e.page + 1)}
-                    style={{ marginTop: '1rem' }}
-                />
-
-                <Dialog
-                    header={editing ? 'Editar Categoria' : 'Nova Categoria'}
-                    visible={dialogOpen}
-                    onHide={() => setDialogOpen(false)}
-                    style={{ width: '400px' }}
-                >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
-                        <InputText
-                            label="Nome"
-                            value={form.name}
-                            onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        />
-                        <InputText
-                            label="Descrição"
-                            value={form.description}
-                            onChange={(e) => setForm({ ...form, description: e.target.value })}
-                        />
-                        <Button label="Salvar" onClick={handleSave} style={{ width: '100%' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <Typography variant="h2">Categorias</Typography>
+                        <Button label="Nova Categoria" onClick={openCreate} />
                     </div>
-                </Dialog>
+
+                    {error && <Message severity="error" text={error} style={{ marginBottom: '1rem' }} />}
+
+                    <Search
+                        label='Buscar'
+                        placeholder="Buscar categoria..."
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                        style={{ marginBottom: '1rem', width: '100%' }}
+                    />
+                    <div style={{ overflowX: 'auto', width: '100%' }}>
+                        <Table value={categories} loading={loading}>
+                            {columns.map((col) => (
+                                <Column
+                                    key={col.field}
+                                    field={col.field}
+                                    header={col.header}
+                                    body={col.body}
+                                />
+                            ))}
+                        </Table>
+                    </div>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+
+                        <Paginator
+                            first={(page - 1) * limit}
+                            rows={limit}
+                            totalRecords={total}
+                            onPageChange={(e) => setPage(e.page + 1)}
+                            style={{ marginTop: '1rem' }}
+                        />
+                    </div>
+
+                    <Dialog
+                        header={editing ? 'Editar Categoria' : 'Nova Categoria'}
+                        visible={dialogOpen}
+                        onHide={() => setDialogOpen(false)}
+                        style={{ width: '400px' }}
+                    >
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
+                            <InputText
+                                label="Nome"
+                                value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            />
+                            <InputText
+                                label="Descrição"
+                                value={form.description}
+                                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                            />
+                            <Button label="Salvar" onClick={handleSave} style={{ width: '100%' }} />
+                        </div>
+                    </Dialog>
+                </div>
             </AppLayout>
         </ProtectedRoute>
     );

@@ -42,8 +42,12 @@ export default function DashboardPage() {
   ];
 
   return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+
+    
     <ProtectedRoute adminOnly>
-      <AppLayout>
+      
+      <AppLayout >
         <Typography variant="h2">Visão Geral do Sistema</Typography>
 
         <div style={{
@@ -51,6 +55,7 @@ export default function DashboardPage() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
           gap: '1.5rem',
           marginTop: '1.5rem',
+          
         }}>
           {cards.map((card) => (
             <Card key={card.label}>
@@ -66,5 +71,6 @@ export default function DashboardPage() {
         </div>
       </AppLayout>
     </ProtectedRoute>
+    </div>
   );
 }

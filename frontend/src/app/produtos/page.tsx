@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import {
     Table, Button, Typography, Search,
     Dialog, InputText, MultiSelect, Message, Paginator, InputNumber, Column,
-    Dropdown
+    Dropdown,
+    InputFile
 } from '@uigovpe/components';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppLayout from '@/components/AppLayout';
@@ -72,7 +73,6 @@ export default function ProdutosPage() {
             setCategories([]);
         }
     };
-
 
     useEffect(() => {
         fetchProducts();
@@ -166,48 +166,58 @@ export default function ProdutosPage() {
     return (
         <ProtectedRoute>
             <AppLayout>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <Typography variant="h2">Produtos</Typography>
-                    <Button label="Novo Produto" onClick={openCreate} />
-                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minHeight: '100%' }}>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                        <Typography variant="h2">Produtos</Typography>
+                        <Button label="Novo Produto" onClick={openCreate} />
+                    </div>
 
-                {error && <Message severity="error" text={error} style={{ marginBottom: '1rem' }} />}
+                    {error && <Message severity="error" text={error} style={{ marginBottom: '1rem' }} />}
 
-                <Search
-                    label='Buscar'
-                    placeholder="Buscar produto..."
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                    style={{ marginBottom: '1rem', width: '100%' }}
-                />
-                <Dropdown
-                    label="Filtrar por Categoria"
-                    value={categoryFilter}
-                    options={[{ label: 'Todas', value: '' }, ...categoryOptions]}
-                    onChange={(e) => { setCategoryFilter(e.value); setPage(1); }}
-                    style={{ marginBottom: '1rem', minWidth: '200px' }}
-                />
-                <div style={{ overflowX: 'auto', width: '100%' }}>
-                    <Table value={products} loading={loading}>
-                        {columns.map((col) => (
-                            <Column
-                                key={col.field}
-                                field={col.field}
-                                header={col.header}
-                                body={col.body}
+                    <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1, minWidth: '300px' }}>
+                            <Search
+                                label='Buscar'
+                                placeholder="Buscar produto..."
+                                value={search}
+                                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                                style={{ width: '100%' }}
                             />
-                        ))}
-                    </Table>
+                        </div>
+                        <div style={{ minWidth: '250px' }}>
+                            <Dropdown
+                                label="Filtrar por Categoria"
+                                value={categoryFilter}
+                                options={[{ label: 'Todas', value: '' }, ...categoryOptions]}
+                                onChange={(e) => { setCategoryFilter(e.value); setPage(1); }}
+                                style={{ width: '100%' }}
+                            />
+                        </div>
+                    </div>
+
+                    <div style={{ overflowX: 'auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Table value={products} loading={loading} style={{ flex: 1 }}>
+                            {columns.map((col) => (
+                                <Column
+                                    key={col.field}
+                                    field={col.field}
+                                    header={col.header}
+                                    body={col.body}
+                                />
+                            ))}
+                        </Table>
+                    </div>
+
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                        <Paginator
+                            first={(page - 1) * limit}
+                            rows={limit}
+                            totalRecords={total}
+                            onPageChange={(e) => setPage(e.page + 1)}
+                        />
+                    </div>
                 </div>
-
-
-                <Paginator
-                    first={(page - 1) * limit}
-                    rows={limit}
-                    totalRecords={total}
-                    onPageChange={(e) => setPage(e.page + 1)}
-                    style={{ marginTop: '1rem' }}
-                />
 
                 <Dialog
                     header={editing ? 'Editar Produto' : 'Novo Produto'}
@@ -245,13 +255,18 @@ export default function ProdutosPage() {
                             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
                                 Imagem do Produto
                             </label>
-                            <input
-                                type="file"
+                            <InputFile
                                 accept="image/*"
-                                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                                appendOnSelect
+                                label="Anexe um arquivo"
+                                mode="default"
+                                onChange={() => {}}
+                                onClear={() => setImageFile(null)}
+                                placeholder="Selecionar arquivo"
+                                supportText="Formatos permitidos: .jpeg, .jpg, .png"
                             />
                         </div>
-                        <Button label="Salvar" onClick={handleSave} style={{ width: '100%' }} />
+                        <Button label="Salvar" onClick={handleSave} style={{ width: '100%', marginTop: '1rem' }} />
                     </div>
                 </Dialog>
             </AppLayout>

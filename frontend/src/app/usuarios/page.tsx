@@ -8,7 +8,7 @@ import {
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppLayout from '@/components/AppLayout';
 import api from '@/services/api';
-import { useAuth } from '@/contexts/AuthContext'; 
+import { useAuth } from '@/contexts/AuthContext';
 
 interface User {
     id: string;
@@ -19,7 +19,7 @@ interface User {
 }
 
 export default function UsuariosPage() {
-    const { user: userLogged } = useAuth(); 
+    const { user: userLogged } = useAuth();
     const [users, setUsers] = useState<User[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -61,20 +61,20 @@ export default function UsuariosPage() {
 
     const handleSave = async () => {
         try {
-            setLoading(true); 
+            setLoading(true);
             let userId = editing?.id;
 
             if (editing) {
                 await api.put(`/users/${editing.id}`, form);
             } else {
                 const response = await api.post('/users', form);
-                userId = response.data.id; 
+                userId = response.data.id;
             }
 
             if (avatarFile && userId) {
                 const formData = new FormData();
                 formData.append('file', avatarFile);
-                
+
                 await api.post(`/users/${userId}/avatar`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
@@ -83,7 +83,7 @@ export default function UsuariosPage() {
             setDialogOpen(false);
             fetchUsers();
             setAvatarFile(null);
-            
+
         } catch (err) {
             console.error(err);
             setError('Erro ao salvar usuário. Verifique os dados e tente novamente.');
@@ -119,11 +119,11 @@ export default function UsuariosPage() {
                 return (
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <Button label="Editar" onClick={() => openEdit(row)} />
-                        <Button 
-                            label={isMe ? "Você" : "Remover"} 
-                            severity="danger" 
-                            disabled={isMe} 
-                            onClick={() => handleDelete(row.id)} 
+                        <Button
+                            label={isMe ? "Você" : "Remover"}
+                            severity="danger"
+                            disabled={isMe}
+                            onClick={() => handleDelete(row.id)}
                             style={isMe ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
                             title={isMe ? "Você não pode remover sua própria conta" : ""}
                         />
@@ -136,87 +136,91 @@ export default function UsuariosPage() {
     return (
         <ProtectedRoute adminOnly>
             <AppLayout>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <Typography variant="h2">Usuários</Typography>
-                    <Button label="Novo Usuário" onClick={openCreate} />
-                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minHeight: '100%' }}>
 
-                {error && <Message severity="error" text={error} style={{ marginBottom: '1rem' }} />}
-
-                <Search
-                    label="Buscar"
-                    placeholder="Buscar por nome ou e-mail..."
-                    value={search}
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        setPage(1);
-                    }}
-                    style={{ marginBottom: '1rem', width: '100%' }}
-                />
-                
-                <div style={{ overflowX: 'auto', width: '100%' }}>
-                    <Table value={users} loading={loading}>
-                        {columns.map((col) => (
-                            <Column
-                                key={col.field}
-                                field={col.field}
-                                header={col.header}
-                                body={col.body}
-                            />
-                        ))}
-                    </Table>
-                </div>
-                
-                <Paginator
-                    first={(page - 1) * limit}
-                    rows={limit}
-                    totalRecords={total}
-                    onPageChange={(e) => setPage(e.page + 1)}
-                    style={{ marginTop: '1rem' }}
-                />
-
-                <Dialog
-                    header={editing ? 'Editar Usuário' : 'Novo Usuário'}
-                    visible={dialogOpen}
-                    onHide={() => setDialogOpen(false)}
-                    style={{ width: '400px' }}
-                >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
-                        <InputText
-                            label="Nome"
-                            value={form.name}
-                            onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        />
-                        <InputText
-                            label="E-mail"
-                            value={form.email}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        />
-                        <InputText
-                            label={editing ? 'Nova Senha (opcional)' : 'Senha'}
-                            value={form.password}
-                            onChange={(e) => setForm({ ...form, password: e.target.value })}
-                            type="password"
-                        />
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
-                                Foto do Usuário
-                            </label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
-                            />
-                        </div>
-                        <Dropdown
-                            label="Perfil"
-                            value={form.role}
-                            options={roleOptions}
-                            onChange={(e) => setForm({ ...form, role: e.value })}
-                        />
-                        <Button label="Salvar" onClick={handleSave} style={{ width: '100%' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                        <Typography variant="h2">Usuários</Typography>
+                        <Button label="Novo Usuário" onClick={openCreate} />
                     </div>
-                </Dialog>
+
+                    {error && <Message severity="error" text={error} style={{ marginBottom: '1rem' }} />}
+
+                    <Search
+                        label="Buscar"
+                        placeholder="Buscar por nome ou e-mail..."
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage(1);
+                        }}
+                        style={{ marginBottom: '1rem', width: '100%' }}
+                    />
+
+                    <div style={{ overflowX: 'auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Table value={users} loading={loading} style={{ flex: 1 }}>
+                            {columns.map((col) => (
+                                <Column
+                                    key={col.field}
+                                    field={col.field}
+                                    header={col.header}
+                                    body={col.body}
+                                />
+                            ))}
+                        </Table>
+                    </div>
+
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                        <Paginator
+                            first={(page - 1) * limit}
+                            rows={limit}
+                            totalRecords={total}
+                            onPageChange={(e) => setPage(e.page + 1)}
+                        />
+                    </div>
+
+                    <Dialog
+                        header={editing ? 'Editar Usuário' : 'Novo Usuário'}
+                        visible={dialogOpen}
+                        onHide={() => setDialogOpen(false)}
+                        style={{ width: '400px' }}
+                    >
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
+                            <InputText
+                                label="Nome"
+                                value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            />
+                            <InputText
+                                label="E-mail"
+                                value={form.email}
+                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            />
+                            <InputText
+                                label={editing ? 'Nova Senha (opcional)' : 'Senha'}
+                                value={form.password}
+                                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                type="password"
+                            />
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                                    Foto do Usuário
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                                />
+                            </div>
+                            <Dropdown
+                                label="Perfil"
+                                value={form.role}
+                                options={roleOptions}
+                                onChange={(e) => setForm({ ...form, role: e.value })}
+                            />
+                            <Button label="Salvar" onClick={handleSave} style={{ width: '100%' }} />
+                        </div>
+                    </Dialog>
+                </div>
             </AppLayout>
         </ProtectedRoute>
     );
