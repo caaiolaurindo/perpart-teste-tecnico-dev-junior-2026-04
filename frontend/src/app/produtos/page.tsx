@@ -150,7 +150,7 @@ export default function ProdutosPage() {
         {
             field: 'imageUrl', header: 'Imagem',
             body: (row: Product) => row.imageUrl
-                ? <img src={`http://localhost:3001${row.imageUrl}`} alt={row.name} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4 }} />
+                ? <img src={row.imageUrl} alt={row.name} style={{ width: 48, height: 48, objectFit: 'cover' }} />
                 : <span>—</span>,
         },
         { field: 'name', header: 'Nome' },
@@ -268,7 +268,10 @@ export default function ProdutosPage() {
                                 appendOnSelect
                                 label="Anexe um arquivo"
                                 mode="default"
-                                onChange={() => { }}
+                                onChange={(e: any) => {
+                                    const file = e.files?.[0] || e.target?.files?.[0];
+                                    if (file) setImageFile(file);
+                                }}
                                 onClear={() => setImageFile(null)}
                                 placeholder="Selecionar arquivo"
                                 supportText="Formatos permitidos: .jpeg, .jpg, .png"

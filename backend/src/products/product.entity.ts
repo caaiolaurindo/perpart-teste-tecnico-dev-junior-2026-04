@@ -20,7 +20,7 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   price: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   imageUrl: string;
 
   @ManyToOne(() => User, (user) => user.products, { onDelete: 'SET NULL', nullable: true })

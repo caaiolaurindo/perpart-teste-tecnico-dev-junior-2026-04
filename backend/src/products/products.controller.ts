@@ -47,16 +47,11 @@ export class ProductsController {
     return this.service.remove(id);
   }
 
-  @Post(':id/image')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads/products',
-      filename: (req, file, cb) => {
-        cb(null, `${Date.now()}${extname(file.originalname)}`);
-      },
-    }),
-  }))
-  uploadImage(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
-    return this.service.updateImage(id, `/uploads/products/${file.filename}`);
+@Post(':id/image')
+  uploadImage(
+    @Param('id') id: string, 
+    @Body() body: { imageUrl: string }
+  ) {
+    return this.service.updateImage(id, body.imageUrl);
   }
 }
